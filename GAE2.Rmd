@@ -1,0 +1,76 @@
+---
+title: "GAE2: The allometry of brain size in mammals"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output:
+  bookdown::html_document2:
+    toc: false
+    self_contained: true
+    number_sections: false
+    fig_caption: yes
+bibliography:  
+- GAE2.bib
+- GAE2_packages.bib
+csl: ecology.csl
+
+#uncomment this line to produce HTML and PDF in RStudio:
+#knit: pagedown::chrome_print
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+
+# automatically create a bib database for R packages
+papaja::r_refs(file = "GAE2_packages.bib")
+```
+
+```{r YourAssignment}
+
+# 1. Develop a regression model for the relationship between brain size and mean 
+#    body size for species, then 
+
+# 2. Develop a regression model for the relationship using median brain and body 
+#    sizes calculated for each family.
+
+# Don't forget to check assumptions and transform variables if needed to better
+# fit the assumptions.
+
+# 3. Add to the "Statistical Methods" to explain what you did in sufficient 
+#    detail that others could replicate your work. Don't forget to cite R
+#    packages where appropriate.
+
+# 4. Write a sufficient "Results" section remembering to parenthetically cite 
+#    tables and figures for support.
+```
+
+# Introduction
+
+Why some animals have big brains and others do not has intrigued scholars for millennia. Yet, the taxonomic scope of brain size research is limited to a few mammal lineages. @Burger_2019 compiled a dataset of brain sizes from the literature for 1,552 species spanning 28 orders to explore the allometry of brain size to body size.
+
+# Methods
+
+@Burger_2019 conducted an extensive search using the key words "mammal brain size" in Google Scholar ([scholar.google.com](https://scholar.google.com/)) and DRYAD ([datadryad.org](https://datadryad.org)) for published datasets on brain size and other publications reporting brain size measurements. When these sources led to previously compiled datasets, they checked those references to confirm authenticity. Data for each species were checked by at least two authors to confirm authenticity between the initial and second source encountered.
+
+Data inclusion was based on the following criteria. They used brain and body size data from the same published source when possible. They referenced body size data when they were obtained from a different source than brain size. In the data, they report sex and sample sizes or ranges (e.g., 1 \< n \< 10) of adult animals used in estimating brain size (when reported). They used averages for adults of both sexes, and brain and body size of adult females for lineages known to exhibit sexual size dimorphism. For published datasets, they verified references for accuracy and merged data into a master file standardized by the taxonomy. When subspecies were reported, they took mean values for species weighted for sample sizes. The final dataset includes estimates of brain size and body size for 1,552 mammal species collated and verified from 54 published references. Data provided by @dryad.2r62k7s.
+
+## Statistical Methods
+
+All analyses were conducted in R [@R-base]. Data import, manipulation, and visualization were done using packages from the tidyverse metapackage [@R-tidyverse].
+
+```{r dataImport, message=FALSE}
+# Don't forget to check on the R data type and use the factor() function 
+# for those character (chr) variables that you want to use as factor
+# variables.
+
+brains <- read_csv("BrainAllometry.csv")
+```
+
+# Results
+
+## Species
+
+## Families
+
+# Literature Cited
