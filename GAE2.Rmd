@@ -1,0 +1,52 @@
+---
+title: "GAE2"
+subtitle: "Data summary and communication"
+author: "T.H. Martin"
+date: "Spring 2022"
+output:
+  bookdown::html_document2:
+    number_sections: FALSE
+    toc: TRUE
+    code_download: true
+    self_contained: true
+
+toc-title: "Table of Contents"
+bibliography:
+- GAE.bib
+- R-GAE2.bib
+csl: ecology.csl
+---
+
+# Scenario 1
+
+## Setup code chunk:
+
+```{r setup, message=FALSE}
+# We can include comments inside code chunks by prefacing with "#"
+
+# The opts_chunk$set() function sets the default behavior for all code
+# chunks except the one it is in. Here I've told Rmarkdown to print out the 
+# code chunk and to suppress information messages (but not warnings) in the
+# code chunks that follow. We will usually set echo = FALSE to suppress
+# printing the code in our output.
+
+# You can change the behavior of individual code chunks by clicking on the 
+# gear icon at the top right of the chunk and choosing your preferred options.
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = TRUE
+)
+
+library(papaja)
+library(tidyverse)
+library(kableExtra)
+library(latex2exp)   # Allows me to use LaTeX in ggplot2
+
+
+# Use the papaja package to create a bibliography of package citations:
+papaja::r_refs(file = "R-GAE2.bib")
+
+```
+
