@@ -50,3 +50,16 @@ papaja::r_refs(file = "R-GAE2.bib")
 
 ```
 
+## Your assignment:
+
+  1. Measure the maximum length of 20 beans from each population.
+  2. Record the data in a spread sheet and produce an appropriately formatted .csv file for import into R.
+  3. Import the data and calculate the following for each sample:
+     a. means,
+     b. standard errors of the means,
+     c. medians
+     d. inter-quartile ranges
+    
+  4. Build an appropriately formatted table with these summary statistics.
+  5. Build a figures with boxplots to summarize the two samples.
+  
