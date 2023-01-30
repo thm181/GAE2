@@ -1,0 +1,55 @@
+---
+title: "GAE2"
+author: "THM -- replace with your name"
+format: 
+  html:
+    embed-resources: true
+    toc: true
+    code-tools: true
+
+execute:
+  echo: false
+
+csl: ecology.csl
+
+editor: visual
+
+bibliography: references.bib
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE
+  ) 
+
+library(gt)          # Allow more complex formatting for tables
+library(latex2exp)   # Allows you to use LaTeX for labeling       
+library(kableExtra)  # For attractive tables
+library(tidyverse)   # A meta-package with a bunch of data management and
+                     # graphics functions.
+
+```
+
+<!--# This chunk is a work-around to produce left-aligned table captions -->
+
+```{=html}
+<style type="text/css">
+caption, .table-caption {
+  text-align: left;
+}
+</style>
+```
+## GAE2:
+
+Data summary and communication:
+
+1.  Measure the maximum dimension of 20 red beans and 20 white beans.
+2.  Create an appropriately formatted .csv file for import to R
+3.  Summarize your data using measures of location (mean and median) and of dispersion (standard deviation, range, IQR).
+4.  Create a table and a figure communicating the data summary.
+
+## References:
