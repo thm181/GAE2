@@ -13,8 +13,6 @@ execute:
 csl: ecology.csl
 
 editor: visual
-
-bibliography: references.bib
 ---
 
 ```{r}
