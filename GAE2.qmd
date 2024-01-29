@@ -7,12 +7,10 @@ format:
     toc: true
     code-tools: true
 
-execute:
-  echo: false
-
 csl: ecology.csl
 
 editor: visual
+bibliography: references.bib
 ---
 
 ```{r}
@@ -21,12 +19,11 @@ editor: visual
 #| message: false
 knitr::opts_chunk$set(
   echo = FALSE,
-  message = FALSE
+  message = TRUE
   ) 
 
-library(gt)          # Allow more complex formatting for tables
 library(latex2exp)   # Allows you to use LaTeX for labeling       
-library(kableExtra)  # For attractive tables
+library(gt)          # For attractive tables
 library(tidyverse)   # A meta-package with a bunch of data management and
                      # graphics functions.
 
@@ -36,11 +33,46 @@ library(tidyverse)   # A meta-package with a bunch of data management and
 
 ```{=html}
 <style type="text/css">
-caption, .table-caption {
-  text-align: left;
+caption, .table-caption { 
+text-align: left;
 }
 </style>
 ```
+```{r}
+#| label: apaFunction
+
+apa <- function(x) {
+  gt(x) %>%
+  tab_options(
+    table.border.top.color = "white",
+    heading.title.font.size = px(16),
+    column_labels.border.top.width = 3,
+    column_labels.border.top.color = "black",
+    column_labels.border.bottom.width = 3,
+    column_labels.border.bottom.color = "black",
+    table_body.border.bottom.color = "black",
+    table.border.bottom.color = "white",
+    table.width = pct(90),
+    table.background.color = "white"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_borders(
+        sides = c("top", "bottom"),
+        color = "white",
+        weight = px(1)
+      ),
+      cell_fill(color = "white", alpha = NULL)
+      ),
+    locations = cells_body(
+      columns = everything(),
+      rows = everything()
+    )
+  )
+}
+
+```
+
 ## GAE2:
 
 Data summary and communication:
@@ -49,5 +81,61 @@ Data summary and communication:
 2.  Create an appropriately formatted .csv file for import to R
 3.  Summarize your data using measures of location (mean and median) and of dispersion (standard deviation, range, IQR).
 4.  Create a table and a figure communicating the data summary.
+
+## Tom's Example:
+
+### Methods:
+
+I purchased approximately 400 g each of dried red kidney beans and baby kidney beans (white) from a local grocery store. I then haphazardly sampled 20 of each type and measured their greatest dimension to the nearest 0.1 millimeter with digital calipers.
+
+#### Statistical Methods:
+
+I summarized the maximum lengths using functions provided in *R* [@base]. I used functions provided by the *tidyverse* metapackage [@tidyverse] for data manipulation and plotting and from *gt* [@gt] for table formatting.
+
+```{r}
+#| label: dataImport
+
+TomsBeans <- read_csv("TomsBeans.csv", show_col_types = FALSE)
+```
+
+### Results:
+
+```{r}
+#| label: tbl-BeanTable
+#| tbl-cap: "Summary of Tom's bean length data. All lengths were measured to the nearest mm."
+
+BeanSummary <- TomsBeans |>
+  group_by(Color) |>
+  summarize(
+    MeanL = mean(Length),
+    MedianL = median(Length),
+    s = sd(Length),
+    Range = max(Length) - min(Length),
+    iqr = IQR(Length)
+  )
+  
+BeanTable <- apa(BeanSummary) |>
+  cols_align(
+    align = "left",
+    columns = Color
+  ) |>
+  cols_label(
+    .fn = md,
+    Color = "**Bean <br> Color**",
+    MeanL = "**Mean <br> Length**",
+    MedianL = "**Median <br> Length**",
+    s = "**Standard <br> Deviation**",
+    iqr = "**IQR**",
+    Range = "**Range**"
+  ) |>
+  fmt_number(
+    decimals = 1
+  ) |>
+  cols_align_decimal(columns = 2:6)
+
+BeanTable
+
+
+```
 
 ## References:
