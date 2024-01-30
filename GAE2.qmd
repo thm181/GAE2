@@ -22,8 +22,8 @@ knitr::opts_chunk$set(
   message = TRUE
   ) 
 
+library(kableExtra)  # For APA-style tables
 library(latex2exp)   # Allows you to use LaTeX for labeling       
-library(gt)          # For attractive tables
 library(tidyverse)   # A meta-package with a bunch of data management and
                      # graphics functions.
 
@@ -38,41 +38,6 @@ text-align: left;
 }
 </style>
 ```
-```{r}
-#| label: apaFunction
-
-apa <- function(x) {
-  gt(x) %>%
-  tab_options(
-    table.border.top.color = "white",
-    heading.title.font.size = px(16),
-    column_labels.border.top.width = 3,
-    column_labels.border.top.color = "black",
-    column_labels.border.bottom.width = 3,
-    column_labels.border.bottom.color = "black",
-    table_body.border.bottom.color = "black",
-    table.border.bottom.color = "white",
-    table.width = pct(90),
-    table.background.color = "white"
-  ) %>%
-  tab_style(
-    style = list(
-      cell_borders(
-        sides = c("top", "bottom"),
-        color = "white",
-        weight = px(1)
-      ),
-      cell_fill(color = "white", alpha = NULL)
-      ),
-    locations = cells_body(
-      columns = everything(),
-      rows = everything()
-    )
-  )
-}
-
-```
-
 ## GAE2:
 
 Data summary and communication:
@@ -90,52 +55,115 @@ I purchased approximately 400 g each of dried red kidney beans and baby kidney b
 
 #### Statistical Methods:
 
-I summarized the maximum lengths using functions provided in *R* [@base]. I used functions provided by the *tidyverse* metapackage [@tidyverse] for data manipulation and plotting and from *gt* [@gt] for table formatting.
+I summarized the maximum lengths using functions provided in *R* [@base]. I used functions provided by the *tidyverse* metapackage [@tidyverse] for data manipulation and plotting and from *knitr* and *kableExtra* [@knitr; @kableExtra] for table formatting.
 
 ```{r}
 #| label: dataImport
 
-TomsBeans <- read_csv("TomsBeans.csv", show_col_types = FALSE)
+TomsBeans <- read_csv(         # read_csv comes from the tidyverse and is a
+  "TomsBeans.csv",             # good way (but not the only way) to import
+  show_col_types = FALSE       # .csv files.
+  )
+
+TomsBeans$Color <- factor(     # factor() changes these data from character
+  TomsBeans$Color,             # data to factor data. Factors have defined
+  levels = c(                  # levels while character data does not. You
+    "Red",                     # can let R define the order of the factors and
+    "White"                    # use the original character names, or you can
+  ),                           # arrange them in the order you prefer and give
+  labels = c(                  # them labels that will often be used in output.
+    "Red Kidney",
+    "Baby Lima"
+  )
+)
 ```
 
 ### Results:
 
+Bean length overlapped for the two varieties, but baby Lima bean length averaged approximately 2 mm longer than that for the red kidney beans (@tbl-BeanTable, @fig-TomsBeans). It's interesting to note that while the standard deviation and range was greater for the baby Lima beans, the interquartile range was narrower.
+
 ```{r}
 #| label: tbl-BeanTable
-#| tbl-cap: "Summary of Tom's bean length data. All lengths were measured to the nearest mm."
+#| tbl-cap: "Summary of maximum dimensions (lengths) of red kidney beans and baby Lima beans measured to the nearest 0.1 mm."
 
-BeanSummary <- TomsBeans |>
-  group_by(Color) |>
-  summarize(
-    MeanL = mean(Length),
-    MedianL = median(Length),
-    s = sd(Length),
-    Range = max(Length) - min(Length),
-    iqr = IQR(Length)
+BeanSummary <- TomsBeans |>              # Note that I'm using the pipe "|>" to
+  group_by(Color) |>                     # pass the information from one line to
+  summarize(                             # the next. The group_by() function can
+    MeanL = mean(Length),                # be used to sort the data into groups
+    MedianL = median(Length),            # and allow calculations to be done
+    s = sd(Length),                      # on each group separately.
+    Range = max(Length) - min(Length),   # The summarize() function allows you
+    iqr = IQR(Length)                    # to summarize using many of the 
+  )                                      # operations provided by base R. See
+                                         # "?summarize" in the console or use
+                                         # the help window tab to the right to
+                                         # see the complete list.
+
+kbl(                              # The kbl() function is provided by the
+  BeanSummary,                    # kableExtra package as a "wrapper" for
+  escape = FALSE,                 # kable() provided by the knitr package 
+  protect_latex = TRUE,           # that is automatically installed as
+  digits = 1,                     # part of RStudio. See this web site
+  col.names = c(                  # https://haozhu233.github.io/kableExtra/
+    "<br> Bean",                  # for far more information about options.
+    "<br> Mean",
+    "<br> Median",
+    "Standard <br> Deviation",
+    "<br> Range",
+    "<br> IQR"
   )
-  
-BeanTable <- apa(BeanSummary) |>
-  cols_align(
-    align = "left",
-    columns = Color
   ) |>
-  cols_label(
-    .fn = md,
-    Color = "**Bean <br> Color**",
-    MeanL = "**Mean <br> Length**",
-    MedianL = "**Median <br> Length**",
-    s = "**Standard <br> Deviation**",
-    iqr = "**IQR**",
-    Range = "**Range**"
-  ) |>
-  fmt_number(
-    decimals = 1
-  ) |>
-  cols_align_decimal(columns = 2:6)
+  kable_classic(
+    bootstrap_options = "basic",
+    full = FALSE
+  )
 
-BeanTable
+```
 
+```{r}
+#| label: fig-TomsBeans
+#| fig-cap: "Maximum dimensions (lengths) of red kidney beans and baby lima beans measured to the nearest 0.1 mm. *Note that the y-axis begins at zero (0).*"
+#| fig-width: 3
+#| fig-height: 5
 
+set.seed(9991) # Keeps the points in the same place for each run. You can "play"
+               # with the seed number to get different arrangements.
+
+ggplot(                           # From the ggplot2 package (tidyverse)
+  data = TomsBeans,               # tell it where the data may be found
+  aes(                            # the "aesthetic" argument -- what to plot
+      x = Color,                  # what will be on the x axis
+      y = Length                  # what will be on the y axis
+    )
+  ) +
+  geom_boxplot(                   # the "geometry" -- what kind of graph
+    coef = 3                      # an option for the boxplot: how many IQRs
+  ) +                             # out to consider an outlier (1.5 is default)
+  geom_jitter(                    # add jittered points
+    aes(fill = Color),            # you can ADD to the aesthetic
+    width = 0.35,                 # sets the limit of the horizontal jitter
+    height = 0,                   # sets the lilmit of the vertical jitter
+    size = 3,                     # the size of the plotting symbol
+    alpha = 0.7,                  # the transparency of the plotting symbol
+    shape = 21                    # Google "ggplot2 shapes" to what's available.
+    ) +
+  scale_y_continuous(             # scale_ . . . used to provide options for
+    name = "Bean Length (mm)",    # graph elements -- here for the y-axis.
+    limits = c(10,20),            # the extent of the axis
+    breaks = seq(10,20,2),        # where the tick-marks should go
+    expand = c(0,0)               # the space applied at the start and end of
+  ) +                             # the axis scale.
+  xlab("Bean Type") +             # another way to provide an axis title
+  scale_fill_manual(              # scale_ . . . also used to describe colors
+    values = c("red","white")
+    ) +
+  guides(fill = "none") +         # figure legends are also known as "guides"
+  theme_classic()                 # theme() is used to format pretty much all 
+                                  # aspects of the graph (there are lots of
+                                  # defaults, so you only need to change things
+                                  # if you want to -- there are also several
+                                  # pre-designed themes. I use theme_classic() 
+                                  # most of the time.)
 ```
 
 ## References:
